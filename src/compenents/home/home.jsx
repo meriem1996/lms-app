@@ -35,7 +35,7 @@ class Home extends React.Component {
         </h1>
         <div className="container-fluid d-flex p-4">
           <NewStudent
-            handleSumbit={this.addStudent}
+            handleSubmit={this.addStudent}
             changeInput={this.changeInput}
           // changeInputNom={this.changeInputNom}
           // changeInputPren={this.changeInputPren}
@@ -60,62 +60,95 @@ class Home extends React.Component {
     event.preventDefault();
     //validation formulaire
 
-    if(this.state.nom=="" || this.state.prenom=="" || this.state.email=="" || this.state.avatar=="") {
+    if (this.state.nom == "" || this.state.prenom == "" || this.state.email == "" || this.state.avatar == "") {
       alert("veuillez remplir tous les champs")
-    }else{
+    } else {
 
-    //clear the form
-    event.target.reset();
-    //recuperer les infos
-    let nvStudent = new StudentModal(
-      // this.state.list_student_data.length + 1,
-      0,
-      this.state.nom,
-      this.state.prenom,
-      this.state.email,
-      this.state.avatar,
-      false
-    );
-    //vider tous les states
+      //clear the form
+      event.target.reset();
+      //recuperer les infos
+      let nvStudent = new StudentModal(
+        // this.state.list_student_data.length + 1,
+        0,
+        this.state.nom,
+        this.state.prenom,
+        this.state.email,
+        this.state.avatar,
+        false
+      );
+      //vider tous les states
 
-    this.setState({
-      nom: "",
-      prenom: "",
-      email: "",
-      avatar: "",
-    })
-    //ajouter student a la liste
-    let newStudent = this.state.list_student_data;
+      this.setState({
+        nom: "",
+        prenom: "",
+        email: "",
+        avatar: "",
+      })
+      //ajouter student a la liste
+      let newStudent = this.state.list_student_data;
 
-    newStudent.push(nvStudent);
-    this.setState({ list_student_data: newStudent });
+      newStudent.push(nvStudent);
+      this.setState({ list_student_data: newStudent });
 
-    const data_student = {
-      nom:nvStudent.nom,
-      pren:nvStudent.pren,
-      email:nvStudent.email,
-      avatar:nvStudent.avatar
-    }
-    //ajouter un etudiant a la partie serveur "firebase" avec axios
-    axios.post("students.json",data_student).then((response)=>{
-
-      let id_new_student = response.data.name;
-      const my_new_student = {
-        nom:nvStudent.nom,
-        prenom:nvStudent.prenom,
-        email:nvStudent.email,
-        avatar:nvStudent.avatar,
-        id:id_new_student
+      const data_student = {
+        nom: nvStudent.nom,
+        prenom: nvStudent.prenom,
+        email: nvStudent.email,
+        avatar: nvStudent.avatar,
+        isPresent: nvStudent.isPresent
       }
-      console.log(my_new_student)
+      //ajouter un etudiant a la partie serveur "firebase" avec axios
+      axios.post("students.json", data_student).then((response) => {
+
+        let id_new_student = response.data.name;
+        let newStudent = this.state.list_student_data;
+        newStudent.forEach(s => {
+          if (s.id == 0) {
+            s.id = id_new_student;
+          }
+          console.log(s)
+        })
+      })
+
+
+
+
+      // console.log(this.state.list_student_data)
+      // console.log(nvStudent)
+      // alert(this.state.nom+'\n '+this.state.prenom+'\n '+this.state.email)
+    }
+
+
+  }
+  // recuperer la liste des etudiants depuis firebase onload page avec firebase
+
+  componentDidMount() {
+    axios.get("students.json").then((response) => {
+      //extraire toutes les cles du l'objet data
+      let keys = Object.keys(response.data)
+      //parcourir les keys
+    let listEtudiant =  keys.map((k) => {
+
+        let ns = new StudentModal(
+          k,
+          response.data[k].nom,
+          response.data[k].prenom,
+          response.data[k].email,
+          response.data[k].avatar,
+          response.data[k].isPresent
+          );
+        return ns;
+        //affichage des proprietes de l'objet data
+        // console.log(k, response.data[k])
+
+      });
+
+      //ajouter la liste
+      this.setState({list_student_data:listEtudiant})
+      
+      console.log(listEtudiant)
     })
-
-    // console.log(this.state.list_student_data)
-    // console.log(nvStudent)
-    // alert(this.state.nom+'\n '+this.state.prenom+'\n '+this.state.email)
   }
-  }
-
   // changeInputNom = (event)=> {
   //   this.setState({nom:event.target.value})
   // }
