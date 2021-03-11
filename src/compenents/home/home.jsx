@@ -52,7 +52,7 @@ class Home extends React.Component {
   changeInput = (event) => {
     let value = event.target.value;
     let input = event.target.name;
-    console.log(value, input)
+    // console.log(value, input)
     this.setState({ [input]: value })
   }
   addStudent = (event) => {
@@ -69,6 +69,7 @@ class Home extends React.Component {
     //recuperer les infos
     let nvStudent = new StudentModal(
       // this.state.list_student_data.length + 1,
+      0,
       this.state.nom,
       this.state.prenom,
       this.state.email,
@@ -83,12 +84,31 @@ class Home extends React.Component {
       email: "",
       avatar: "",
     })
-
+    //ajouter student a la liste
     let newStudent = this.state.list_student_data;
+
     newStudent.push(nvStudent);
     this.setState({ list_student_data: newStudent });
+
+    const data_student = {
+      nom:nvStudent.nom,
+      pren:nvStudent.pren,
+      email:nvStudent.email,
+      avatar:nvStudent.avatar
+    }
     //ajouter un etudiant a la partie serveur "firebase" avec axios
-    axios.post("students.json",nvStudent)
+    axios.post("students.json",data_student).then((response)=>{
+
+      let id_new_student = response.data.name;
+      const my_new_student = {
+        nom:nvStudent.nom,
+        prenom:nvStudent.prenom,
+        email:nvStudent.email,
+        avatar:nvStudent.avatar,
+        id:id_new_student
+      }
+      console.log(my_new_student)
+    })
 
     // console.log(this.state.list_student_data)
     // console.log(nvStudent)
