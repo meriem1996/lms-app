@@ -42,7 +42,10 @@ class Home extends React.Component {
           // changeInputAvatar={this.changeInputAvatar}
           // changeInputEmail={this.changeInputEmail}
           />
-          <ListStudent dataList={this.state.list_student_data} />
+          <ListStudent 
+          dataList={this.state.list_student_data} 
+          handleDeleteStudent={this.deleteStudent}
+          />
         </div>
       </>
 
@@ -163,5 +166,18 @@ class Home extends React.Component {
   // changeInputEmail = (event)=> {
   //   this.setState({email:event.target.value})
   // }
+
+  //handle delete student
+  deleteStudent = (idStudent) =>{
+
+    //supp un etudiantdepuis firebase
+    axios.delete("students/"+idStudent+".json").then(()=>{
+      //supp dans html
+      let newList = this.state.list_student_data;
+      newList = newList.filter(s=>s.id != idStudent);
+      this.setState({list_student_data:newList})
+    })
+    // alert(idStudent)
+  }
 }
 export default Home;
