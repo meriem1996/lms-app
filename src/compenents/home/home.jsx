@@ -37,6 +37,7 @@ class Home extends React.Component {
           <NewStudent
             handleSubmit={this.addStudent}
             changeInput={this.changeInput}
+            avatar={this.state.avatar}
           // changeInputNom={this.changeInputNom}
           // changeInputPren={this.changeInputPren}
           // changeInputAvatar={this.changeInputAvatar}
@@ -129,6 +130,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     axios.get("students.json").then((response) => {
+     if(response.data != null){
       //extraire toutes les cles du l'objet data
       let keys = Object.keys(response.data)
       //parcourir les keys
@@ -152,6 +154,7 @@ class Home extends React.Component {
       this.setState({list_student_data:listEtudiant})
 
       console.log(listEtudiant)
+     }
     })
   }
   // changeInputNom = (event)=> {
@@ -170,13 +173,19 @@ class Home extends React.Component {
   //handle delete student
   deleteStudent = (idStudent) =>{
 
-    //supp un etudiantdepuis firebase
+    let choice = window.confirm('Are you sure ?');
+    if(choice==true){
+          //supp un etudiantdepuis firebase
     axios.delete("students/"+idStudent+".json").then(()=>{
       //supp dans html
-      let newList = this.state.list_student_data;
-      newList = newList.filter(s=>s.id != idStudent);
+      let newList = this.state.list_student_data.filter(
+        (s)=> s.id != idStudent
+      )
       this.setState({list_student_data:newList})
     })
+
+
+    }
     // alert(idStudent)
   }
 }
