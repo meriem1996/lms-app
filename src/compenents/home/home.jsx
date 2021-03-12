@@ -1,6 +1,6 @@
 import React from "react";
 import ListStudent from "../student/list-student";
-import NewStudent from "../student/new-student";
+import FormStudent from "../student/new-student";
 import StudentModal from "../../modeles/student-model";
 import axios from "../../utils/axios";
 
@@ -15,7 +15,7 @@ class Home extends React.Component {
       prenom: "",
       email: "",
       avatar: "",
-      updateStudent_id:-1,
+      updateStudent_id: -1,
       list_student_data: [
         // new StudentModal("meriem","kadiri","mery-mimi-96@gmail.com","https://i.stack.imgur.com/l60Hf.png",true),
         // new StudentModal("mery","kadi","mery-mimi-96@gmail.com","https://i.stack.imgur.com/l60Hf.png",false),
@@ -27,7 +27,8 @@ class Home extends React.Component {
       ],
       textBtn: "add student",
       iconBtn: "fas fa-plus-circle",
-      btn: "btn btn-warning"
+      btn: "btn btn-warning",
+      action: "ADD"
     }
     // console.log(this.state)
   }
@@ -38,16 +39,19 @@ class Home extends React.Component {
           🧑‍🎓 LMS-APP : <span className="text-warning">Home</span> 🏠
         </h1>
         <div className="container-fluid d-flex p-4">
-          <NewStudent
+          <FormStudent
+            handleAddSubmit={this.addStudent}
+            handleEditSubmit={this.submitEditStudent}
+            changeInput={this.changeInput}
+
             textBtn={this.state.textBtn}
             iconBtn={this.state.iconBtn}
             btn={this.state.btn}
-            handleSubmit={this.addStudent}
-            changeInput={this.changeInput}
             avatar={this.state.avatar}
             nom={this.state.nom}
             prenom={this.state.prenom}
             email={this.state.email}
+            action={this.state.action}
           // changeInputNom={this.changeInputNom}
           // changeInputPren={this.changeInputPren}
           // changeInputAvatar={this.changeInputAvatar}
@@ -198,20 +202,64 @@ class Home extends React.Component {
     }
     // alert(idStudent)
   }
-  
+//lorsqu'on click sur btn edit icon
   editStudent = (editStudent) => {
     //changer le text du button newStudent
-    this.setState({textBtn:"Edit Student"})
-    this.setState({iconBtn:"fas fa-edit"})
-    this.setState({btn:"btn btn-success"})
+    this.setState({ textBtn: "Edit Student" })
+    this.setState({ iconBtn: "fas fa-edit" })
+    this.setState({ btn: "btn btn-success" })
+    //changer l'action de state
+    this.setState({ action: "EDIT" })
     //ajouter les infos au state
     this.setState({
-      nom:editStudent.nom,
-      prenom:editStudent.prenom,
-      email:editStudent.email,
-      avatar:editStudent.avatar,
-      updateStudent_id:editStudent.id
+      nom: editStudent.nom,
+      prenom: editStudent.prenom,
+      email: editStudent.email,
+      avatar: editStudent.avatar,
+      updateStudent_id: editStudent.id
     })
   }
+//lorsqu'on change les infoson firebase
+submitEditStudent = (event)=>{
+  event.preventDefault();
+  //partie data a envoyer a firebase
+  const student_data = {
+    nom:this.state.nom,
+    prenom:this.state.prenom,
+    email:this.state.email,
+    avatar:this.state.avatar
+  }
+  //appe a la fonction put de axios
+  axios.put("students/"+this.state.updateStudent_id+".json",student_data).then((response)=>{
+    //changer les infos de l'etudiant
+    let newList = this.state.list_student_data;
+    newList.forEach((s)=>{
+      if(s.id==this.state.updateStudent_id){
+
+        s.nom=response.data.nom;
+        s.prenom=response.data.prenom;
+        s.email=response.data.email;
+        s.avatar=response.data.avatar;
+      }
+    });
+    //modifier la liste du state
+    this.setState({list_student_data:newList})
+    //vider le formulaire 
+    event.target.reset();
+    //vider les variables state
+    this.setState({
+      nom:"",
+      prenom:"",
+      email:"",
+      avatar:"",
+      updateStudent_id: -1,
+      action:"ADD",
+      textBtn: "add student",
+      iconBtn: "fas fa-plus-circle",
+      btn: "btn btn-warning"
+    })
+  })
+}
+
 }
 export default Home;

@@ -4,7 +4,7 @@ export default function NewStudent(props) {
     return (
         <div className="col-4 border p-5">
           <div className="avatar border mx-auto mt-5 " style={{backgroundImage:`url(${props.avatar || 'https://i.stack.imgur.com/l60Hf.png'})`,backgroundSize:'cover'}}/>
-          <form onSubmit={props.handleSubmit} autoComplete="off">
+          <form onSubmit={props.action=="ADD" ? props.handleAddSubmit : props.handleEditSubmit} autoComplete="off">
             <div className="mb-4 mt-4 w-70 mx-auto">
               <input
               name="prenom"
