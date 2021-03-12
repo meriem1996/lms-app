@@ -15,6 +15,7 @@ class Home extends React.Component {
       prenom: "",
       email: "",
       avatar: "",
+      updateStudent_id:-1,
       list_student_data: [
         // new StudentModal("meriem","kadiri","mery-mimi-96@gmail.com","https://i.stack.imgur.com/l60Hf.png",true),
         // new StudentModal("mery","kadi","mery-mimi-96@gmail.com","https://i.stack.imgur.com/l60Hf.png",false),
@@ -44,6 +45,9 @@ class Home extends React.Component {
             handleSubmit={this.addStudent}
             changeInput={this.changeInput}
             avatar={this.state.avatar}
+            nom={this.state.nom}
+            prenom={this.state.prenom}
+            email={this.state.email}
           // changeInputNom={this.changeInputNom}
           // changeInputPren={this.changeInputPren}
           // changeInputAvatar={this.changeInputAvatar}
@@ -200,6 +204,14 @@ class Home extends React.Component {
     this.setState({textBtn:"Edit Student"})
     this.setState({iconBtn:"fas fa-edit"})
     this.setState({btn:"btn btn-success"})
+    //ajouter les infos au state
+    this.setState({
+      nom:editStudent.nom,
+      prenom:editStudent.prenom,
+      email:editStudent.email,
+      avatar:editStudent.avatar,
+      updateStudent_id:editStudent.id
+    })
   }
 }
 export default Home;
