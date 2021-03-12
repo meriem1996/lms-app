@@ -23,7 +23,10 @@ class Home extends React.Component {
         // new StudentModal("meriem","kadiri","mery-mimi-96@gmail.com","https://i.stack.imgur.com/l60Hf.png",true),
         // new StudentModal("mery","kadi","mery-mimi-96@gmail.com","https://i.stack.imgur.com/l60Hf.png",false),
         // new StudentModal("mimi","kad","mery-mimi-96@gmail.com","https://i.stack.imgur.com/l60Hf.png",true)
-      ]
+      ],
+      textBtn: "add student",
+      iconBtn: "fas fa-plus-circle",
+      btn: "btn btn-warning"
     }
     // console.log(this.state)
   }
@@ -35,6 +38,9 @@ class Home extends React.Component {
         </h1>
         <div className="container-fluid d-flex p-4">
           <NewStudent
+            textBtn={this.state.textBtn}
+            iconBtn={this.state.iconBtn}
+            btn={this.state.btn}
             handleSubmit={this.addStudent}
             changeInput={this.changeInput}
             avatar={this.state.avatar}
@@ -43,9 +49,10 @@ class Home extends React.Component {
           // changeInputAvatar={this.changeInputAvatar}
           // changeInputEmail={this.changeInputEmail}
           />
-          <ListStudent 
-          dataList={this.state.list_student_data} 
-          handleDeleteStudent={this.deleteStudent}
+          <ListStudent
+            dataList={this.state.list_student_data}
+            handleDeleteStudent={this.deleteStudent}
+            handleEditStudent={this.editStudent}
           />
         </div>
       </>
@@ -113,7 +120,7 @@ class Home extends React.Component {
           }
           console.log(s)
         })
-        this.setState({list_student_data:newStudent})
+        this.setState({ list_student_data: newStudent })
       })
 
 
@@ -130,31 +137,31 @@ class Home extends React.Component {
 
   componentDidMount() {
     axios.get("students.json").then((response) => {
-     if(response.data != null){
-      //extraire toutes les cles du l'objet data
-      let keys = Object.keys(response.data)
-      //parcourir les keys
-    let listEtudiant =  keys.map((k) => {
+      if (response.data != null) {
+        //extraire toutes les cles du l'objet data
+        let keys = Object.keys(response.data)
+        //parcourir les keys
+        let listEtudiant = keys.map((k) => {
 
-        let ns = new StudentModal(
-          k,
-          response.data[k].nom,
-          response.data[k].prenom,
-          response.data[k].email,
-          response.data[k].avatar,
-          response.data[k].isPresent
+          let ns = new StudentModal(
+            k,
+            response.data[k].nom,
+            response.data[k].prenom,
+            response.data[k].email,
+            response.data[k].avatar,
+            response.data[k].isPresent
           );
-        return ns;
-        //affichage des proprietes de l'objet data
-        // console.log(k, response.data[k])
+          return ns;
+          //affichage des proprietes de l'objet data
+          // console.log(k, response.data[k])
 
-      });
+        });
 
-      //ajouter la liste
-      this.setState({list_student_data:listEtudiant})
+        //ajouter la liste
+        this.setState({ list_student_data: listEtudiant })
 
-      console.log(listEtudiant)
-     }
+        console.log(listEtudiant)
+      }
     })
   }
   // changeInputNom = (event)=> {
@@ -171,22 +178,28 @@ class Home extends React.Component {
   // }
 
   //handle delete student
-  deleteStudent = (idStudent) =>{
+  deleteStudent = (idStudent) => {
 
     let choice = window.confirm('Are you sure ?');
-    if(choice==true){
-          //supp un etudiantdepuis firebase
-    axios.delete("students/"+idStudent+".json").then(()=>{
-      //supp dans html
-      let newList = this.state.list_student_data.filter(
-        (s)=> s.id != idStudent
-      )
-      this.setState({list_student_data:newList})
-    })
-
+    if (choice == true) {
+      //supp un etudiantdepuis firebase
+      axios.delete("students/" + idStudent + ".json").then(() => {
+        //supp dans html
+        let newList = this.state.list_student_data.filter(
+          (s) => s.id != idStudent
+        )
+        this.setState({ list_student_data: newList })
+      })
 
     }
     // alert(idStudent)
+  }
+  
+  editStudent = (editStudent) => {
+    //changer le text du button newStudent
+    this.setState({textBtn:"Edit Student"})
+    this.setState({iconBtn:"fas fa-edit"})
+    this.setState({btn:"btn btn-success"})
   }
 }
 export default Home;

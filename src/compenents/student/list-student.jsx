@@ -15,7 +15,10 @@ export default function ListStudent(props) {
                 <Student data={props.dataList[2]} /> */}
                 {
                     props.dataList.map( s =>
-                    <Student key={s.id} data={s} handelDelete={props.handleDeleteStudent} /> )
+                    <Student key={s.id} data={s} 
+                    handelDelete={props.handleDeleteStudent}
+                    handelEdit={props.handleEditStudent}
+                    /> )
                 }
             </div>
         </div>

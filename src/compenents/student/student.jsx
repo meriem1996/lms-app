@@ -21,7 +21,7 @@ export default function Student(props) {
                     <button className="mz-1 btn btn-info m-1">
                         <i className="fas fa-eye" />
                     </button>
-                    <button className="mz-1 btn btn-warning m-1">
+                    <button onClick={()=>props.handelEdit(props.data)} className="mz-1 btn btn-warning m-1">
                         <i className="fas fa-edit" />
                     </button>
                     <button onClick={()=>props.handelDelete(props.data.id)} className="mz-1 btn btn-danger m-1">
